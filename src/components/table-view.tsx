@@ -1,0 +1,74 @@
+'use client';
+
+import React, { useState } from 'react';
+import { useTableStore } from '@/store/table';
+import { TableRepresentation } from './table-representation';
+import { CommonOrderCard } from './common-order-card';
+import { GuestOrderSheet } from './guest-order-sheet';
+import { Button } from './ui/button';
+import { LogOut } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
+
+export function TableView() {
+  const table = useTableStore((state) => state.table);
+  const resetTable = useTableStore((state) => state.resetTable);
+  const [selectedGuestId, setSelectedGuestId] = useState<number | null>(null);
+
+  if (!table) return null;
+
+  return (
+    <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
+      <div className="w-full flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold font-headline text-primary">Стол №1</h1>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm">
+              <LogOut className="mr-2 h-4 w-4" />
+              Завершить
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Завершить работу со столом?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Все данные по этому столу будут удалены. Это действие нельзя отменить.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Отмена</AlertDialogCancel>
+              <AlertDialogAction onClick={resetTable}>Завершить</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+      </div>
+
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-2 flex items-center justify-center">
+          <TableRepresentation table={table} onSeatClick={setSelectedGuestId} />
+        </div>
+        <div className="md:col-span-1">
+          <CommonOrderCard />
+        </div>
+      </div>
+      
+      <GuestOrderSheet
+        guestId={selectedGuestId}
+        onOpenChange={(open) => {
+          if (!open) setSelectedGuestId(null);
+        }}
+      />
+    </div>
+  );
+}
