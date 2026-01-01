@@ -20,7 +20,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Circle, Square } from 'lucide-react';
 
 const formSchema = z.object({
-  shape: z.enum(['round', 'square']),
+  shape: z.enum(['round', 'rectangular']),
   seats: z.coerce.number().min(1, 'Минимум 1 стул').max(20, 'Максимум 20 стульев'),
 });
 
@@ -77,10 +77,10 @@ export function CreateTableDialog({ open, onOpenChange }: CreateTableDialogProps
                       <Circle className="h-12 w-12" />
                       Круглый
                     </Label>
-                    <Label htmlFor="shape-square" className="flex flex-col items-center gap-2 rounded-md border-2 border-transparent [&:has([data-state=checked])]:border-primary p-4 cursor-pointer">
-                      <RadioGroupItem value="square" id="shape-square" className="sr-only" />
+                    <Label htmlFor="shape-rectangular" className="flex flex-col items-center gap-2 rounded-md border-2 border-transparent [&:has([data-state=checked])]:border-primary p-4 cursor-pointer">
+                      <RadioGroupItem value="rectangular" id="shape-rectangular" className="sr-only" />
                       <Square className="h-12 w-12" />
-                      Квадратный
+                      Прямоугольный
                     </Label>
                   </RadioGroup>
                 </div>

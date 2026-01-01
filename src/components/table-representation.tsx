@@ -27,10 +27,10 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
     const positions = [];
     const numSeats = table.seats;
     const containerSize = 320; // Corresponds to w-80 and h-80
-    const tableRadius = table.shape === 'round' ? containerSize / 4 : containerSize / 3;
     const chairSize = 48; // Corresponds to w-12 and h-12
 
     if (table.shape === 'round') {
+      const tableRadius = containerSize / 4;
       const angleStep = (2 * Math.PI) / numSeats;
       for (let i = 0; i < numSeats; i++) {
         const angle = angleStep * i - Math.PI / 2;
@@ -38,39 +38,55 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
         const y = containerSize / 2 + tableRadius * Math.sin(angle) - chairSize / 2;
         positions.push({ top: `${y}px`, left: `${x}px` });
       }
-    } else { // square
-        const seatsPerSide = Math.floor(numSeats / 4);
-        const extraSeats = numSeats % 4;
-        const sideCounts = [seatsPerSide, seatsPerSide, seatsPerSide, seatsPerSide];
-        for (let i = 0; i < extraSeats; i++) sideCounts[i]++;
+    } else { // rectangular
+        const tableWidth = containerSize / 1.5;
+        const tableHeight = containerSize / 3;
 
+        const remainingSeats = numSeats - 2;
+        const seatsPerLongSide = Math.ceil(remainingSeats / 2);
+        const seatsTop = seatsPerLongSide;
+        const seatsBottom = remainingSeats - seatsPerLongSide;
+        
         let seatIndex = 0;
-        const placeOnSide = (count: number, side: 'top' | 'right' | 'bottom' | 'left') => {
-            for (let i = 0; i < count; i++) {
-                const pos = (i + 1) * (containerSize / (count + 1));
-                let x = 0, y = 0;
-                if (side === 'top') { x = pos - chairSize/2; y = 0 - chairSize/2; }
-                if (side === 'bottom') { x = pos - chairSize/2; y = containerSize - chairSize/2; }
-                if (side === 'left') { y = pos - chairSize/2; x = 0 - chairSize/2; }
-                if (side === 'right') { y = pos - chairSize/2; x = containerSize - chairSize/2; }
-                positions[seatIndex++] = { top: `${y}px`, left: `${x}px` };
-            }
-        };
-        placeOnSide(sideCounts[0], 'top');
-        placeOnSide(sideCounts[1], 'right');
-        placeOnSide(sideCounts[2], 'bottom');
-        placeOnSide(sideCounts[3], 'left');
+
+        // Top side
+        for (let i = 0; i < seatsTop; i++) {
+            const x = (containerSize / 2) - (tableWidth / 2) + (i + 1) * (tableWidth / (seatsTop + 1)) - chairSize / 2;
+            const y = (containerSize / 2) - (tableHeight / 2) - chairSize;
+            positions.push({ top: `${y}px`, left: `${x}px` });
+        }
+        
+        // Right side
+        if (numSeats >= 2) {
+            const x = (containerSize / 2) + (tableWidth / 2);
+            const y = containerSize / 2 - chairSize / 2;
+            positions.push({ top: `${y}px`, left: `${x}px` });
+        }
+
+        // Bottom side
+        for (let i = 0; i < seatsBottom; i++) {
+            const x = (containerSize / 2) - (tableWidth / 2) + (i + 1) * (tableWidth / (seatsBottom + 1)) - chairSize / 2;
+            const y = (containerSize / 2) + (tableHeight / 2);
+            positions.push({ top: `${y}px`, left: `${x}px` });
+        }
+
+        // Left side
+        if (numSeats >= 1) {
+            const x = (containerSize / 2) - (tableWidth / 2) - chairSize;
+            const y = containerSize / 2 - chairSize / 2;
+            positions.push({ top: `${y}px`, left: `${x}px` });
+        }
     }
 
     return positions;
   }, [table.shape, table.seats]);
 
   return (
-    <div className="relative h-80 w-80 my-8">
+    <div className="relative h-80 w-80 my-4 md:my-8">
       <div
         className={cn(
           'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary/20 border-2 border-primary shadow-lg',
-          table.shape === 'round' ? 'rounded-full w-32 h-32' : 'rounded-md w-32 h-32'
+          table.shape === 'round' ? 'rounded-full w-32 h-32' : 'rounded-md w-48 h-24'
         )}
       />
       {table.guests.map((guest, index) => (

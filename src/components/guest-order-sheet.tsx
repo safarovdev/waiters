@@ -59,7 +59,7 @@ export function GuestOrderSheet({ guestId, onOpenChange }: GuestOrderSheetProps)
 
   return (
     <Sheet open={!!guestId} onOpenChange={onOpenChange}>
-      <SheetContent className="flex flex-col">
+      <SheetContent className="flex flex-col w-full sm:max-w-md">
         <SheetHeader>
           <SheetTitle>Заказ гостя №{guest?.id}</SheetTitle>
           <SheetDescription>Добавляйте и отслеживайте позиции заказа.</SheetDescription>
@@ -96,7 +96,7 @@ export function GuestOrderSheet({ guestId, onOpenChange }: GuestOrderSheetProps)
             </form>
 
             <h3 className="font-semibold">Позиции</h3>
-            <ScrollArea className="h-64">
+            <ScrollArea className="h-[calc(100vh-24rem)]">
               <div className="space-y-2 pr-2">
                 {guest?.orders && guest.orders.length > 0 ? (
                   guest.orders.map((item: OrderItem) => (

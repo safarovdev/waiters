@@ -28,7 +28,7 @@ export function TableView() {
   if (!table) return null;
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
+    <div className="w-full max-w-4xl mx-auto flex flex-col items-center p-4">
       <div className="w-full flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold font-headline text-primary">Стол №1</h1>
         <AlertDialog>
@@ -54,11 +54,11 @@ export function TableView() {
 
       </div>
 
-      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 flex items-center justify-center">
+      <div className="w-full flex flex-col lg:flex-row gap-8">
+        <div className="flex-1 flex items-center justify-center">
           <TableRepresentation table={table} onSeatClick={setSelectedGuestId} />
         </div>
-        <div className="md:col-span-1">
+        <div className="w-full lg:w-96">
           <CommonOrderCard />
         </div>
       </div>

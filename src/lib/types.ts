@@ -14,7 +14,7 @@ export type Guest = {
   status: GuestStatus;
 };
 
-export type TableShape = 'round' | 'square';
+export type TableShape = 'round' | 'rectangular';
 
 export type Table = {
   shape: TableShape;
