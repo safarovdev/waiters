@@ -30,7 +30,7 @@ export function TableView() {
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center p-4">
       <div className="w-full flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold font-headline text-primary">Стол №1</h1>
+        <h1 className="text-2xl font-bold font-headline text-primary-foreground">Стол №1</h1>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive" size="sm">
@@ -47,7 +47,7 @@ export function TableView() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Отмена</AlertDialogCancel>
-              <AlertDialogAction onClick={resetTable}>Завершить</AlertDialogAction>
+              <AlertDialogAction onClick={resetTable} className="bg-destructive hover:bg-destructive/90">Завершить</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

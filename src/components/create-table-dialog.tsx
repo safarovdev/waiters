@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Circle, Square } from 'lucide-react';
+import { ScrollArea } from './ui/scroll-area';
 
 const formSchema = z.object({
   shape: z.enum(['round', 'rectangular']),
@@ -54,57 +55,59 @@ export function CreateTableDialog({ open, onOpenChange }: CreateTableDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogHeader>
-            <DialogTitle>Создать стол</DialogTitle>
-            <DialogDescription>Выберите форму стола и количество гостей.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-6 py-6">
-            <Controller
-              name="shape"
-              control={control}
-              render={({ field }) => (
-                <div className="space-y-2">
-                  <Label>Форма стола</Label>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="flex gap-4"
-                  >
-                    <Label htmlFor="shape-round" className="flex flex-col items-center gap-2 rounded-md border-2 border-transparent [&:has([data-state=checked])]:border-primary p-4 cursor-pointer">
-                      <RadioGroupItem value="round" id="shape-round" className="sr-only" />
-                      <Circle className="h-12 w-12" />
-                      Круглый
-                    </Label>
-                    <Label htmlFor="shape-rectangular" className="flex flex-col items-center gap-2 rounded-md border-2 border-transparent [&:has([data-state=checked])]:border-primary p-4 cursor-pointer">
-                      <RadioGroupItem value="rectangular" id="shape-rectangular" className="sr-only" />
-                      <Square className="h-12 w-12" />
-                      Прямоугольный
-                    </Label>
-                  </RadioGroup>
-                </div>
-              )}
-            />
-            <Controller
-              name="seats"
-              control={control}
-              render={({ field }) => (
-                <div className="space-y-2">
-                  <Label htmlFor="seats">Количество стульев</Label>
-                  <Input id="seats" type="number" {...field} />
-                  {errors.seats && <p className="text-sm text-destructive">{errors.seats.message}</p>}
-                </div>
-              )}
-            />
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Отмена
-            </Button>
-            <Button type="submit">Создать</Button>
-          </DialogFooter>
-        </form>
+      <DialogContent className="flex flex-col">
+        <DialogHeader>
+          <DialogTitle>Создать стол</DialogTitle>
+          <DialogDescription>Выберите форму стола и количество гостей.</DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="flex-1 -mx-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="px-6 h-full flex flex-col">
+            <div className="grid gap-6 py-6 flex-1">
+              <Controller
+                name="shape"
+                control={control}
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label>Форма стола</Label>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="grid grid-cols-2 gap-4"
+                    >
+                      <Label htmlFor="shape-round" className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-transparent [&:has([data-state=checked])]:border-primary p-4 cursor-pointer h-32">
+                        <RadioGroupItem value="round" id="shape-round" className="sr-only" />
+                        <Circle className="h-12 w-12" />
+                        Круглый
+                      </Label>
+                      <Label htmlFor="shape-rectangular" className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-transparent [&:has([data-state=checked])]:border-primary p-4 cursor-pointer h-32">
+                        <RadioGroupItem value="rectangular" id="shape-rectangular" className="sr-only" />
+                        <Square className="h-12 w-12" />
+                        Прямоугольный
+                      </Label>
+                    </RadioGroup>
+                  </div>
+                )}
+              />
+              <Controller
+                name="seats"
+                control={control}
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label htmlFor="seats">Количество стульев</Label>
+                    <Input id="seats" type="number" {...field} />
+                    {errors.seats && <p className="text-sm text-destructive">{errors.seats.message}</p>}
+                  </div>
+                )}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
+                Отмена
+              </Button>
+              <Button type="submit" className="bg-primary-foreground text-background hover:bg-primary-foreground/90">Создать</Button>
+            </DialogFooter>
+          </form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
