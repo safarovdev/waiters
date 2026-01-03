@@ -37,38 +37,44 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
   const seatPositions = useMemo(() => {
     const positions = [];
     const containerSize = 256; // h-64 w-64
-    const chairSize = 48; // w-12 h-12
+    const chairWidth = 48; // w-12
+    const chairHeight = 32; // h-8
 
     if (table.shape === 'round') {
-      const tableRadius = containerSize / 4.5;
+      const tableRadius = containerSize / 3.5;
       const angleStep = (2 * Math.PI) / table.seats;
       for (let i = 0; i < table.seats; i++) {
         const angle = angleStep * i - Math.PI / 2;
-        const x = containerSize / 2 + tableRadius * Math.cos(angle) - chairSize / 2;
-        const y = containerSize / 2 + tableRadius * Math.sin(angle) - chairSize / 2;
+        const x = containerSize / 2 + tableRadius * Math.cos(angle) - chairWidth / 2;
+        const y = containerSize / 2 + tableRadius * Math.sin(angle) - chairHeight / 2;
         positions.push({ top: `${y}px`, left: `${x}px` });
       }
     } else { // rectangular
         const tableWidth = containerSize / 1.5;
-        const tableHeight = containerSize / 3;
-        const topOffset = (containerSize - tableHeight) / 2 - chairSize;
-        const bottomOffset = (containerSize + tableHeight) / 2;
+        const tableHeight = containerSize / 2.5;
+        const tableTopY = (containerSize - tableHeight) / 2;
+        const tableBottomY = tableTopY + tableHeight;
+        const tableLeftX = (containerSize - tableWidth) / 2;
+        const tableRightX = tableLeftX + tableWidth;
 
         let seatsOnTop: number;
         let seatsOnBottom: number;
-        let seatOnLeft = false;
-        let seatOnRight = false;
+        let seatsOnLeft = 0;
+        let seatsOnRight = 0;
         let remainingSeats = table.seats;
-
-        if (table.seats % 2 !== 0 && table.seats > 1) {
-            seatOnRight = true;
+        
+        if (remainingSeats % 2 !== 0 && remainingSeats > 1) {
+            seatsOnRight = 1;
             remainingSeats--;
         }
         
-        if (remainingSeats >= 2 && (remainingSeats/2) % 2 === 0) {
-            seatOnLeft = true;
-            seatOnRight = true;
-            remainingSeats -= 2;
+        if (remainingSeats >= 2 && remainingSeats / 2 > 4) {
+            if (seatsOnRight === 0) {
+              seatsOnRight = 1;
+              remainingSeats--;
+            }
+            seatsOnLeft = 1;
+            remainingSeats--;
         }
 
         seatsOnTop = Math.ceil(remainingSeats / 2);
@@ -76,47 +82,50 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
 
         if(table.seats === 1) {
             seatsOnTop = 1;
-            seatOnLeft = false;
-            seatOnRight = false;
+            seatsOnBottom = 0;
+            seatsOnLeft = 0;
+            seatsOnRight = 0;
         };
 
-
         let currentSeat = 0;
-        const placeSeat = (x: number, y: number) => {
+        const placeSeat = (x: number, y: number, isVertical: boolean = false) => {
           if (currentSeat < table.seats) {
-            positions.push({ top: `${y}px`, left: `${x}px` });
+            positions.push({ 
+              top: `${y}px`, 
+              left: `${x}px`, 
+              width: `${isVertical ? chairHeight : chairWidth}px`,
+              height: `${isVertical ? chairWidth : chairHeight}px`,
+            });
             currentSeat++;
           }
         }
 
-        // Seat on the left
-        if (seatOnLeft) {
-            const x = (containerSize - tableWidth) / 2 - chairSize;
-            const y = containerSize / 2 - chairSize / 2;
-            placeSeat(x, y);
-        }
-        
         // Seats on top
         for (let i = 0; i < seatsOnTop; i++) {
-            const denominator = seatsOnTop > 0 ? seatsOnTop : 1;
-            const x = (containerSize - tableWidth) / 2 + (tableWidth * (i + 0.5)) / denominator - chairSize/2;
-            const y = topOffset;
-            placeSeat(x, y);
-        }
-        
-        // Seat on the right
-        if (seatOnRight) {
-            const x = (containerSize + tableWidth) / 2;
-            const y = containerSize / 2 - chairSize / 2;
+            const x = tableLeftX + (tableWidth * (i + 0.5)) / seatsOnTop - chairWidth / 2;
+            const y = tableTopY - chairHeight - 4;
             placeSeat(x, y);
         }
         
         // Seats on bottom
         for (let i = 0; i < seatsOnBottom; i++) {
-          const denominator = seatsOnBottom > 0 ? seatsOnBottom : 1;
-            const x = (containerSize - tableWidth) / 2 + (tableWidth * (i + 0.5)) / denominator - chairSize/2;
-            const y = bottomOffset;
+            const x = tableLeftX + (tableWidth * (i + 0.5)) / seatsOnBottom - chairWidth / 2;
+            const y = tableBottomY + 4;
             placeSeat(x,y);
+        }
+
+        // Seat on the left
+        if (seatsOnLeft > 0) {
+            const x = tableLeftX - chairHeight - 4;
+            const y = containerSize / 2 - chairWidth / 2;
+            placeSeat(x, y, true);
+        }
+        
+        // Seat on the right
+        if (seatsOnRight > 0) {
+            const x = tableRightX + 4;
+            const y = containerSize / 2 - chairWidth / 2;
+            placeSeat(x, y, true);
         }
 
     }
@@ -128,7 +137,7 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
       <div
         className={cn(
           'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-muted border-2 border-primary shadow-lg',
-          table.shape === 'round' ? 'w-24 h-24 rounded-full' : 'w-40 h-20'
+          table.shape === 'round' ? 'w-24 h-24 rounded-full' : 'w-40 h-24'
         )}
       />
       {table.guests.map((guest, index) => {
@@ -139,7 +148,7 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
             key={guest.id}
             onClick={() => onSeatClick(guest.id)}
             className={cn(
-              'absolute flex flex-col items-center justify-center w-12 h-12 bg-card border shadow-md transition-all hover:shadow-lg hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 text-center p-1',
+              'absolute flex flex-col items-center justify-center bg-card border shadow-md transition-all hover:shadow-lg hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 text-center p-1 rounded-sm',
               { 'border-green-500': guest.status === 'paid', 'border-blue-500': guest.status === 'all_served'}
             )}
             style={seatPositions[index]}
