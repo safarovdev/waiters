@@ -20,12 +20,11 @@ export function LandingPage({ onCreateTable }: LandingPageProps) {
           </p>
           <Button onClick={onCreateTable} size="lg" className="w-full h-14 text-lg group">
             Начать работу
-            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
           </Button>
         </div>
       </main>
       <footer className="py-6 px-4 text-center text-sm text-muted-foreground">
-        <p>Разработано с ❤️</p>
+        <p>Разработчик @seosfv</p>
       </footer>
     </div>
   );
