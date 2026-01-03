@@ -3,9 +3,10 @@
 import type { Guest, GuestGender } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { User as UserIcon, CheckCircle2, CircleDollarSign, UserRound, User, UserCircle } from 'lucide-react';
+import { User as UserIcon, CheckCircle2, CircleDollarSign } from 'lucide-react';
+import { MaleIcon } from './icons/male-icon';
+import { FemaleIcon } from './icons/female-icon';
 
 interface GuestListProps {
   guests: Guest[];
@@ -21,11 +22,9 @@ const statusConfig: Record<Guest['status'], { label: string; className: string; 
 const getGuestGenderIcon = (gender: GuestGender) => {
     switch(gender) {
         case 'male':
-            return <User className="h-4 w-4" />;
+            return <MaleIcon className="h-4 w-4" />;
         case 'female':
-            return <UserCircle className="h-4 w-4" />;
-        default:
-            return <UserRound className="h-4 w-4" />;
+            return <FemaleIcon className="h-4 w-4" />;
     }
 }
 
@@ -36,8 +35,7 @@ export function GuestList({ guests, onGuestClick }: GuestListProps) {
         <CardTitle>Список гостей</CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-48 md:h-64">
-          <div className="space-y-2 pr-4">
+          <div className="space-y-2">
             {guests.map((guest) => (
               <button
                 key={guest.id}
@@ -60,7 +58,6 @@ export function GuestList({ guests, onGuestClick }: GuestListProps) {
               </button>
             ))}
           </div>
-        </ScrollArea>
       </CardContent>
     </Card>
   );

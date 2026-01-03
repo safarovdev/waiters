@@ -26,7 +26,7 @@ export const useTableStore = create<AppState & TableActions>()(
           id: i + 1,
           orders: [],
           status: 'active',
-          gender: 'other',
+          gender: 'female',
           name: `Гость ${i + 1}`,
         }));
         set({ table: { shape, seats, guests, commonOrder: [] } });
