@@ -42,7 +42,7 @@ export function CommonOrderCard() {
             <PlusCircle />
           </Button>
         </form>
-        <ScrollArea className="h-40 md:h-48">
+        <ScrollArea className="h-40">
           <div className="space-y-2 pr-4">
             {commonOrder && commonOrder.length > 0 ? (
               commonOrder.map((item: OrderItem) => (

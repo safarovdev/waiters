@@ -18,7 +18,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Circle, Square } from 'lucide-react';
-import { ScrollArea } from './ui/scroll-area';
 
 const formSchema = z.object({
   shape: z.enum(['round', 'rectangular']),

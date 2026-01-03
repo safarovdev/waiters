@@ -36,11 +36,11 @@ const getGuestGenderIcon = (gender: GuestGender) => {
 export function TableRepresentation({ table, onSeatClick }: TableRepresentationProps) {
   const seatPositions = useMemo(() => {
     const positions = [];
-    const containerSize = 288; // w-72
-    const chairSize = 56; // w-14
+    const containerSize = 256; // h-64 w-64
+    const chairSize = 48; // w-12 h-12
 
     if (table.shape === 'round') {
-      const tableRadius = containerSize / 4;
+      const tableRadius = containerSize / 4.5;
       const angleStep = (2 * Math.PI) / table.seats;
       for (let i = 0; i < table.seats; i++) {
         const angle = angleStep * i - Math.PI / 2;
@@ -64,7 +64,8 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
             seatOnRight = true;
             remainingSeats--;
         }
-        if (table.seats % 2 === 0 && table.seats > 2) {
+        
+        if (remainingSeats >= 2 && (remainingSeats/2) % 2 === 0) {
             seatOnLeft = true;
             seatOnRight = true;
             remainingSeats -= 2;
@@ -73,7 +74,11 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
         seatsOnTop = Math.ceil(remainingSeats / 2);
         seatsOnBottom = Math.floor(remainingSeats / 2);
 
-        if(table.seats === 1) seatsOnTop = 1;
+        if(table.seats === 1) {
+            seatsOnTop = 1;
+            seatOnLeft = false;
+            seatOnRight = false;
+        };
 
 
         let currentSeat = 0;
@@ -119,11 +124,11 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
   }, [table.shape, table.seats]);
 
   return (
-    <div className="relative h-72 w-72 my-4 md:my-8">
+    <div className="relative h-64 w-64 my-4">
       <div
         className={cn(
           'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-muted border-2 border-primary shadow-lg',
-          table.shape === 'round' ? 'rounded-full w-28 h-28' : 'w-40 h-20'
+          table.shape === 'round' ? 'w-24 h-24 rounded-full' : 'w-40 h-20'
         )}
       />
       {table.guests.map((guest, index) => {
@@ -134,7 +139,7 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
             key={guest.id}
             onClick={() => onSeatClick(guest.id)}
             className={cn(
-              'absolute flex flex-col items-center justify-center w-14 h-14 bg-card border shadow-md transition-all hover:shadow-lg hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 text-center p-1',
+              'absolute flex flex-col items-center justify-center w-12 h-12 bg-card border shadow-md transition-all hover:shadow-lg hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 text-center p-1',
               { 'border-green-500': guest.status === 'paid', 'border-blue-500': guest.status === 'all_served'}
             )}
             style={seatPositions[index]}
@@ -145,7 +150,7 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
               {getGuestGenderIcon(guest.gender)}
               {getGuestStatusIcon(guest.status)}
             </div>
-            {lastOrder && <span className="text-[10px] text-muted-foreground truncate w-full">{lastOrder.name}</span>}
+            {lastOrder && <span className="text-[9px] text-muted-foreground truncate w-full">{lastOrder.name}</span>}
           </button>
         )
       })}
