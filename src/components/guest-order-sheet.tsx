@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useTableStore } from '@/store/table';
-import type { OrderItem, GuestStatus, OrderItemStatus, GuestGender } from '@/lib/types';
+import type { OrderItem, GuestStatus, OrderItemStatus } from '@/lib/types';
 import {
   Sheet,
   SheetContent,
@@ -24,9 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { MaleIcon } from './icons/male-icon';
-import { FemaleIcon } from './icons/female-icon';
 
 interface GuestOrderSheetProps {
   guestId: number | null;
@@ -61,7 +58,7 @@ export function GuestOrderSheet({ guestId, onOpenChange }: GuestOrderSheetProps)
     }
   };
   
-  const handleGuestDetailsChange = (details: { name?: string; gender?: GuestGender}) => {
+  const handleGuestDetailsChange = (details: { name?: string }) => {
     if (guestId) {
         updateGuestDetails(guestId, details);
     }
@@ -99,26 +96,6 @@ export function GuestOrderSheet({ guestId, onOpenChange }: GuestOrderSheetProps)
                 onBlur={handleNameBlur}
                 placeholder='Напр. Анна, в красной кофте'
               />
-            </div>
-
-             <div className="space-y-3">
-              <Label>Пол</Label>
-              <RadioGroup
-                value={guest?.gender}
-                onValueChange={(gender: GuestGender) => handleGuestDetailsChange({ gender })}
-                className="grid grid-cols-2 gap-4"
-              >
-                <Label htmlFor="gender-male" className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-4 hover:border-accent has-[[data-state=checked]]:border-accent cursor-pointer transition-colors h-24">
-                  <RadioGroupItem value="male" id="gender-male" className="sr-only" />
-                  <MaleIcon className="h-8 w-8 text-accent" />
-                  Муж.
-                </Label>
-                <Label htmlFor="gender-female" className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-4 hover:border-accent has-[[data-state=checked]]:border-accent cursor-pointer transition-colors h-24">
-                  <RadioGroupItem value="female" id="gender-female" className="sr-only" />
-                  <FemaleIcon className="h-8 w-8 text-accent" />
-                  Жен.
-                </Label>
-              </RadioGroup>
             </div>
 
             <div className="space-y-2">

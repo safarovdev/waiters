@@ -7,13 +7,11 @@ export type OrderItem = {
 };
 
 export type GuestStatus = 'active' | 'all_served' | 'paid';
-export type GuestGender = 'male' | 'female';
 
 export type Guest = {
   id: number;
   orders: OrderItem[];
   status: GuestStatus;
-  gender: GuestGender;
   name: string;
 };
 

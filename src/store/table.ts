@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { AppState, Guest, OrderItem, TableShape, GuestStatus, OrderItemStatus, GuestGender } from '@/lib/types';
+import type { AppState, Guest, OrderItem, TableShape, GuestStatus, OrderItemStatus } from '@/lib/types';
 
 interface TableActions {
   createTable: (shape: TableShape, seats: number) => void;
@@ -11,7 +11,7 @@ interface TableActions {
   updateOrderItemStatus: (guestId: number, itemId: string, status: OrderItemStatus) => void;
   removeOrderItem: (guestId: number, itemId: string) => void;
   updateGuestStatus: (guestId: number, status: GuestStatus) => void;
-  updateGuestDetails: (guestId: number, details: { name?: string; gender?: GuestGender }) => void;
+  updateGuestDetails: (guestId: number, details: { name?: string }) => void;
   addCommonOrderItem: (itemName: string) => void;
   updateCommonOrderItemStatus: (itemId: string, status: OrderItemStatus) => void;
   removeCommonOrderItem: (itemId: string) => void;
@@ -26,7 +26,6 @@ export const useTableStore = create<AppState & TableActions>()(
           id: i + 1,
           orders: [],
           status: 'active',
-          gender: 'female',
           name: `Гость ${i + 1}`,
         }));
         set({ table: { shape, seats, guests, commonOrder: [] } });

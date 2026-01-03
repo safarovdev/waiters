@@ -1,11 +1,9 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import type { Table, Guest, GuestGender } from '@/lib/types';
+import type { Table, Guest } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { CircleDollarSign, CheckCircle2 } from 'lucide-react';
-import { MaleIcon } from './icons/male-icon';
-import { FemaleIcon } from './icons/female-icon';
+import { CircleDollarSign, CheckCircle2, User } from 'lucide-react';
 
 interface TableRepresentationProps {
   table: Table;
@@ -15,32 +13,23 @@ interface TableRepresentationProps {
 const getGuestStatusIcon = (status: Guest['status']) => {
   switch (status) {
     case 'paid':
-      return <CircleDollarSign className="h-3 w-3 text-green-500" />;
+      return <CircleDollarSign className="h-4 w-4 text-green-500" />;
     case 'all_served':
-      return <CheckCircle2 className="h-3 w-3 text-blue-500" />;
+      return <CheckCircle2 className="h-4 w-4 text-blue-500" />;
     default:
       return null;
   }
 };
 
-const getGuestGenderIcon = (gender: GuestGender) => {
-    switch(gender) {
-        case 'male':
-            return <MaleIcon className="h-4 w-4" />;
-        case 'female':
-            return <FemaleIcon className="h-4 w-4" />;
-    }
-}
-
 
 export function TableRepresentation({ table, onSeatClick }: TableRepresentationProps) {
   const seatPositions = useMemo(() => {
     const positions = [];
-    const containerSize = 256; // h-64 w-64
-    const chairSize = 40; // Represents both width and height for a square chair
+    const containerSize = 320; // h-80 w-80, increased size
+    const chairSize = 48; // increased size
 
     if (table.shape === 'round') {
-      const tableRadius = containerSize / 3.5;
+      const tableRadius = containerSize / 3;
       const angleStep = (2 * Math.PI) / table.seats;
       for (let i = 0; i < table.seats; i++) {
         const angle = angleStep * i - Math.PI / 2;
@@ -49,7 +38,7 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
         positions.push({ top: `${y}px`, left: `${x}px`, width: `${chairSize}px`, height: `${chairSize}px` });
       }
     } else { // rectangular
-        const tableWidth = containerSize / 1.5;
+        const tableWidth = containerSize / 1.25;
         const tableHeight = containerSize / 2.5;
         const tableTopY = (containerSize - tableHeight) / 2;
         const tableBottomY = tableTopY + tableHeight;
@@ -102,27 +91,27 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
         // Seats on top
         for (let i = 0; i < seatsOnTop; i++) {
             const x = tableLeftX + (tableWidth * (i + 0.5)) / seatsOnTop - chairSize / 2;
-            const y = tableTopY - chairSize - 4;
+            const y = tableTopY - chairSize - 8;
             placeSeat(x, y);
         }
         
         // Seats on bottom
         for (let i = 0; i < seatsOnBottom; i++) {
             const x = tableLeftX + (tableWidth * (i + 0.5)) / seatsOnBottom - chairSize / 2;
-            const y = tableBottomY + 4;
+            const y = tableBottomY + 8;
             placeSeat(x,y);
         }
 
         // Seat on the left
         if (seatsOnLeft > 0) {
-            const x = tableLeftX - chairSize - 4;
+            const x = tableLeftX - chairSize - 8;
             const y = containerSize / 2 - chairSize / 2;
             placeSeat(x, y);
         }
         
         // Seat on the right
         if (seatsOnRight > 0) {
-            const x = tableRightX + 4;
+            const x = tableRightX + 8;
             const y = containerSize / 2 - chairSize / 2;
             placeSeat(x, y);
         }
@@ -132,11 +121,11 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
   }, [table.shape, table.seats]);
 
   return (
-    <div className="relative h-64 w-64 my-4">
+    <div className="relative h-80 w-80 my-8">
       <div
         className={cn(
           'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-muted border-2 border-primary shadow-lg',
-          table.shape === 'round' ? 'w-24 h-24 rounded-full' : 'w-40 h-24'
+          table.shape === 'round' ? 'w-32 h-32 rounded-full' : 'w-64 h-32'
         )}
       />
       {table.guests.map((guest, index) => {
@@ -154,11 +143,11 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
             aria-label={`Гость ${guest.id}`}
           >
             <div className="flex items-center gap-1">
-              <span className="font-bold text-xs">{guest.id}</span>
-              {getGuestGenderIcon(guest.gender)}
+              <span className="font-bold text-sm">{guest.id}</span>
+              <User className="h-4 w-4" />
               {getGuestStatusIcon(guest.status)}
             </div>
-            {lastOrder && <span className="text-[9px] text-muted-foreground truncate w-full">{lastOrder.name}</span>}
+            {lastOrder && <span className="text-[10px] text-muted-foreground truncate w-full">{lastOrder.name}</span>}
           </button>
         )
       })}

@@ -1,12 +1,10 @@
 'use client';
 
-import type { Guest, GuestGender } from '@/lib/types';
+import type { Guest } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { User as UserIcon, CheckCircle2, CircleDollarSign } from 'lucide-react';
-import { MaleIcon } from './icons/male-icon';
-import { FemaleIcon } from './icons/female-icon';
 
 interface GuestListProps {
   guests: Guest[];
@@ -19,14 +17,6 @@ const statusConfig: Record<Guest['status'], { label: string; className: string; 
   paid: { label: 'Оплачено', className: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/50', icon: <CircleDollarSign className="h-3 w-3" /> },
 };
 
-const getGuestGenderIcon = (gender: GuestGender) => {
-    switch(gender) {
-        case 'male':
-            return <MaleIcon className="h-4 w-4" />;
-        case 'female':
-            return <FemaleIcon className="h-4 w-4" />;
-    }
-}
 
 export function GuestList({ guests, onGuestClick }: GuestListProps) {
   return (
@@ -44,7 +34,7 @@ export function GuestList({ guests, onGuestClick }: GuestListProps) {
               >
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-md bg-background">
-                     {getGuestGenderIcon(guest.gender)}
+                     <UserIcon className="h-4 w-4" />
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold">{guest.name}</p>
