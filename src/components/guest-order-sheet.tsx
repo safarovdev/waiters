@@ -65,9 +65,9 @@ export function GuestOrderSheet({ guestId, onOpenChange }: GuestOrderSheetProps)
           <SheetDescription>Добавляйте и отслеживайте позиции заказа.</SheetDescription>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto py-4">
-          <div className="space-y-4 pr-6">
-            <div>
+        <div className="flex-1 -mx-6 overflow-y-auto">
+          <div className="space-y-6 px-6 py-4 h-full flex flex-col">
+            <div className="space-y-2">
               <Label>Статус гостя</Label>
               <Select
                 value={guest?.status}
@@ -95,29 +95,31 @@ export function GuestOrderSheet({ guestId, onOpenChange }: GuestOrderSheetProps)
               </Button>
             </form>
 
-            <h3 className="font-semibold">Позиции</h3>
-            <ScrollArea className="h-[calc(100vh-24rem)]">
-              <div className="space-y-2 pr-2">
-                {guest?.orders && guest.orders.length > 0 ? (
-                  guest.orders.map((item: OrderItem) => (
-                    <div key={item.id} className="flex items-center justify-between gap-2 rounded-lg bg-muted p-2">
-                      <span className="flex-1 font-medium">{item.name}</span>
-                       <StatusSelect
-                        value={item.status}
-                        onValueChange={(status: OrderItemStatus) =>
-                          guestId && updateOrderItemStatus(guestId, item.id, status)
-                        }
-                      />
-                       <Button variant="ghost" size="icon" onClick={() => guestId && removeOrderItem(guestId, item.id)} aria-label="Удалить">
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="py-8 text-center text-sm text-muted-foreground">У гостя нет заказов.</p>
-                )}
-              </div>
-            </ScrollArea>
+            <div className="flex flex-col flex-1 min-h-0">
+                <h3 className="font-semibold mb-2">Позиции</h3>
+                <ScrollArea className="flex-1 -mr-6">
+                  <div className="space-y-2 pr-6">
+                    {guest?.orders && guest.orders.length > 0 ? (
+                      guest.orders.map((item: OrderItem) => (
+                        <div key={item.id} className="flex items-center justify-between gap-2 rounded-lg bg-muted p-2">
+                          <span className="flex-1 font-medium break-all">{item.name}</span>
+                           <StatusSelect
+                            value={item.status}
+                            onValueChange={(status: OrderItemStatus) =>
+                              guestId && updateOrderItemStatus(guestId, item.id, status)
+                            }
+                          />
+                           <Button variant="ghost" size="icon" onClick={() => guestId && removeOrderItem(guestId, item.id)} aria-label="Удалить">
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="py-8 text-center text-sm text-muted-foreground">У гостя нет заказов.</p>
+                    )}
+                  </div>
+                </ScrollArea>
+            </div>
           </div>
         </div>
 

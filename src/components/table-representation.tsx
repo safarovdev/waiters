@@ -41,51 +41,74 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
     } else { // rectangular
         const tableWidth = containerSize / 1.5;
         const tableHeight = containerSize / 3;
+        const topOffset = (containerSize - tableHeight) / 2 - chairSize;
+        const bottomOffset = (containerSize + tableHeight) / 2;
 
-        const remainingSeats = numSeats - 2;
-        const seatsPerLongSide = Math.ceil(remainingSeats / 2);
-        const seatsTop = seatsPerLongSide;
-        const seatsBottom = remainingSeats - seatsPerLongSide;
+        let seatsOnTop: number;
+        let seatsOnBottom: number;
+        let seatOnLeft = false;
+        let seatOnRight = false;
         
-        let seatIndex = 0;
+        if (numSeats === 1) {
+            seatsOnTop = 1;
+            seatsOnBottom = 0;
+        } else if (numSeats === 2) {
+            seatsOnTop = 1;
+            seatsOnBottom = 1;
+        } else if (numSeats % 2 === 0) { // even number of seats >= 4
+            seatOnLeft = true;
+            seatOnRight = true;
+            seatsOnTop = (numSeats - 2) / 2;
+            seatsOnBottom = (numSeats - 2) / 2;
+        } else { // odd number of seats >= 3
+            seatOnLeft = true;
+            seatsOnTop = Math.ceil((numSeats - 1) / 2);
+            seatsOnBottom = Math.floor((numSeats - 1) / 2);
+        }
 
-        // Top side
-        for (let i = 0; i < seatsTop; i++) {
-            const x = (containerSize / 2) - (tableWidth / 2) + (i + 1) * (tableWidth / (seatsTop + 1)) - chairSize / 2;
-            const y = (containerSize / 2) - (tableHeight / 2) - chairSize;
-            positions.push({ top: `${y}px`, left: `${x}px` });
+        let currentSeat = 0;
+
+        // Seat on the left
+        if (seatOnLeft) {
+            const x = (containerSize - tableWidth) / 2 - chairSize;
+            const y = containerSize / 2 - chairSize / 2;
+            positions.push({ top: `${y}px`, left: `${x}px`, 'data-guest-id': table.guests[currentSeat]?.id });
+            currentSeat++;
+        }
+
+        // Seats on top
+        for (let i = 0; i < seatsOnTop; i++) {
+            const x = (containerSize - tableWidth) / 2 + (tableWidth * (i + 1)) / (seatsOnTop + 1) - chairSize/2;
+            const y = topOffset;
+            positions.push({ top: `${y}px`, left: `${x}px`, 'data-guest-id': table.guests[currentSeat]?.id });
+            currentSeat++;
         }
         
-        // Right side
-        if (numSeats >= 2) {
-            const x = (containerSize / 2) + (tableWidth / 2);
+        // Seat on the right
+        if (seatOnRight) {
+            const x = (containerSize + tableWidth) / 2;
             const y = containerSize / 2 - chairSize / 2;
-            positions.push({ top: `${y}px`, left: `${x}px` });
+            positions.push({ top: `${y}px`, left: `${x}px`, 'data-guest-id': table.guests[currentSeat]?.id });
+            currentSeat++;
         }
-
-        // Bottom side
-        for (let i = 0; i < seatsBottom; i++) {
-            const x = (containerSize / 2) - (tableWidth / 2) + (i + 1) * (tableWidth / (seatsBottom + 1)) - chairSize / 2;
-            const y = (containerSize / 2) + (tableHeight / 2);
-            positions.push({ top: `${y}px`, left: `${x}px` });
-        }
-
-        // Left side
-        if (numSeats >= 1) {
-            const x = (containerSize / 2) - (tableWidth / 2) - chairSize;
-            const y = containerSize / 2 - chairSize / 2;
-            positions.push({ top: `${y}px`, left: `${x}px` });
+        
+        // Seats on bottom
+        for (let i = 0; i < seatsOnBottom; i++) {
+            const x = (containerSize - tableWidth) / 2 + (tableWidth * (i + 1)) / (seatsOnBottom + 1) - chairSize/2;
+            const y = bottomOffset;
+            positions.push({ top: `${y}px`, left: `${x}px`, 'data-guest-id': table.guests[currentSeat]?.id });
+            currentSeat++;
         }
     }
 
     return positions;
-  }, [table.shape, table.seats]);
+  }, [table.shape, table.seats, table.guests]);
 
   return (
     <div className="relative h-80 w-80 my-4 md:my-8">
       <div
         className={cn(
-          'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary/20 border-2 border-primary shadow-lg',
+          'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-muted border-2 border-primary shadow-lg',
           table.shape === 'round' ? 'rounded-full w-32 h-32' : 'rounded-md w-48 h-24'
         )}
       />
