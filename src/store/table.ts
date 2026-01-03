@@ -57,7 +57,7 @@ export const useTableStore = create<AppState & TableActions>()(
           if (!state.table) return {};
           const newItem: OrderItem = { id: Date.now().toString(), name: itemName, status: 'ordered' };
           const newGuests = state.table.guests.map((g) =>
-            g.id === guestId ? { ...g, orders: [...g.orders, newItem] } : g
+            g.id === guestId ? { ...g, orders: [newItem, ...g.orders] } : g
           );
           return { table: { ...state.table, guests: newGuests } };
         });
@@ -112,7 +112,7 @@ export const useTableStore = create<AppState & TableActions>()(
           return {
             table: {
               ...state.table,
-              commonOrder: [...state.table.commonOrder, newItem],
+              commonOrder: [newItem, ...state.table.commonOrder],
             },
           };
         });
