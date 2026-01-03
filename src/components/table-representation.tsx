@@ -41,8 +41,8 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
 
     if (table.shape === 'round') {
       const tableRadius = containerSize / 4;
-      const angleStep = (2 * Math.PI) / numSeats;
-      for (let i = 0; i < numSeats; i++) {
+      const angleStep = (2 * Math.PI) / table.seats;
+      for (let i = 0; i < table.seats; i++) {
         const angle = angleStep * i - Math.PI / 2;
         const x = containerSize / 2 + tableRadius * Math.cos(angle) - chairSize / 2;
         const y = containerSize / 2 + tableRadius * Math.sin(angle) - chairSize / 2;
