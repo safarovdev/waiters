@@ -5,6 +5,7 @@ import { useTableStore } from '@/store/table';
 import { TableRepresentation } from './table-representation';
 import { CommonOrderCard } from './common-order-card';
 import { GuestOrderSheet } from './guest-order-sheet';
+import { GuestList } from './guest-list';
 import { Button } from './ui/button';
 import { LogOut } from 'lucide-react';
 import {
@@ -58,8 +59,9 @@ export function TableView() {
         <div className="flex-1 flex items-center justify-center">
           <TableRepresentation table={table} onSeatClick={setSelectedGuestId} />
         </div>
-        <div className="w-full lg:w-96">
+        <div className="w-full lg:w-96 flex flex-col gap-8">
           <CommonOrderCard />
+          <GuestList guests={table.guests} onGuestClick={setSelectedGuestId} />
         </div>
       </div>
       

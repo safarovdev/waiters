@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTableStore } from '@/store/table';
-import type { OrderItem, GuestStatus, OrderItemStatus } from '@/lib/types';
+import type { OrderItem, GuestStatus, OrderItemStatus, GuestGender } from '@/lib/types';
 import {
   Sheet,
   SheetContent,
@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2, UserRound, User, UserCircle } from 'lucide-react';
 import { StatusSelect } from './status-select';
 import { ScrollArea } from './ui/scroll-area';
 import {
@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface GuestOrderSheetProps {
   guestId: number | null;
@@ -32,10 +33,17 @@ interface GuestOrderSheetProps {
 
 export function GuestOrderSheet({ guestId, onOpenChange }: GuestOrderSheetProps) {
   const table = useTableStore((state) => state.table);
-  const { addOrderItem, updateOrderItemStatus, removeOrderItem, updateGuestStatus } = useTableStore();
+  const { addOrderItem, updateOrderItemStatus, removeOrderItem, updateGuestStatus, updateGuestDetails } = useTableStore();
   const guest = useMemo(() => table?.guests.find((g) => g.id === guestId), [table, guestId]);
 
   const [newItemName, setNewItemName] = useState('');
+  const [guestName, setGuestName] = useState(guest?.name || '');
+  
+  useEffect(() => {
+    if (guest) {
+      setGuestName(guest.name);
+    }
+  }, [guest]);
 
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +58,19 @@ export function GuestOrderSheet({ guestId, onOpenChange }: GuestOrderSheetProps)
       updateGuestStatus(guestId, status);
     }
   };
+  
+  const handleGuestDetailsChange = (details: { name?: string; gender?: GuestGender}) => {
+    if (guestId) {
+        updateGuestDetails(guestId, details);
+    }
+  }
+
+  const handleNameBlur = () => {
+    if (guest && guestName !== guest.name) {
+      handleGuestDetailsChange({ name: guestName });
+    }
+  };
+
 
   const guestStatusText: Record<GuestStatus, string> = {
     active: 'Активен',
@@ -67,6 +88,42 @@ export function GuestOrderSheet({ guestId, onOpenChange }: GuestOrderSheetProps)
 
         <div className="flex-1 -mx-6 overflow-y-auto">
           <div className="space-y-6 px-6 py-4 h-full flex flex-col">
+            <div className="space-y-2">
+              <Label htmlFor="guest-name">Имя / Комментарий</Label>
+              <Input 
+                id="guest-name"
+                value={guestName} 
+                onChange={(e) => setGuestName(e.target.value)}
+                onBlur={handleNameBlur}
+                placeholder='Напр. Анна, в красной кофте'
+              />
+            </div>
+
+             <div className="space-y-3">
+              <Label>Пол</Label>
+              <RadioGroup
+                value={guest?.gender}
+                onValueChange={(gender: GuestGender) => handleGuestDetailsChange({ gender })}
+                className="grid grid-cols-3 gap-4"
+              >
+                <Label htmlFor="gender-male" className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-4 hover:border-accent has-[[data-state=checked]]:border-accent cursor-pointer transition-colors h-24">
+                  <RadioGroupItem value="male" id="gender-male" className="sr-only" />
+                  <User className="h-8 w-8 text-accent" />
+                  Муж.
+                </Label>
+                <Label htmlFor="gender-female" className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-4 hover:border-accent has-[[data-state=checked]]:border-accent cursor-pointer transition-colors h-24">
+                  <RadioGroupItem value="female" id="gender-female" className="sr-only" />
+                  <UserCircle className="h-8 w-8 text-accent" />
+                  Жен.
+                </Label>
+                <Label htmlFor="gender-other" className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-4 hover:border-accent has-[[data-state=checked]]:border-accent cursor-pointer transition-colors h-24">
+                  <RadioGroupItem value="other" id="gender-other" className="sr-only" />
+                  <UserRound className="h-8 w-8 text-accent" />
+                  Другой
+                </Label>
+              </RadioGroup>
+            </div>
+
             <div className="space-y-2">
               <Label>Статус гостя</Label>
               <Select
