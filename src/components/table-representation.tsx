@@ -37,17 +37,16 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
   const seatPositions = useMemo(() => {
     const positions = [];
     const containerSize = 256; // h-64 w-64
-    const chairWidth = 48; // w-12
-    const chairHeight = 32; // h-8
+    const chairSize = 40; // Represents both width and height for a square chair
 
     if (table.shape === 'round') {
       const tableRadius = containerSize / 3.5;
       const angleStep = (2 * Math.PI) / table.seats;
       for (let i = 0; i < table.seats; i++) {
         const angle = angleStep * i - Math.PI / 2;
-        const x = containerSize / 2 + tableRadius * Math.cos(angle) - chairWidth / 2;
-        const y = containerSize / 2 + tableRadius * Math.sin(angle) - chairHeight / 2;
-        positions.push({ top: `${y}px`, left: `${x}px` });
+        const x = containerSize / 2 + tableRadius * Math.cos(angle) - chairSize / 2;
+        const y = containerSize / 2 + tableRadius * Math.sin(angle) - chairSize / 2;
+        positions.push({ top: `${y}px`, left: `${x}px`, width: `${chairSize}px`, height: `${chairSize}px` });
       }
     } else { // rectangular
         const tableWidth = containerSize / 1.5;
@@ -88,13 +87,13 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
         };
 
         let currentSeat = 0;
-        const placeSeat = (x: number, y: number, isVertical: boolean = false) => {
+        const placeSeat = (x: number, y: number) => {
           if (currentSeat < table.seats) {
             positions.push({ 
               top: `${y}px`, 
               left: `${x}px`, 
-              width: `${isVertical ? chairHeight : chairWidth}px`,
-              height: `${isVertical ? chairWidth : chairHeight}px`,
+              width: `${chairSize}px`,
+              height: `${chairSize}px`,
             });
             currentSeat++;
           }
@@ -102,30 +101,30 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
 
         // Seats on top
         for (let i = 0; i < seatsOnTop; i++) {
-            const x = tableLeftX + (tableWidth * (i + 0.5)) / seatsOnTop - chairWidth / 2;
-            const y = tableTopY - chairHeight - 4;
+            const x = tableLeftX + (tableWidth * (i + 0.5)) / seatsOnTop - chairSize / 2;
+            const y = tableTopY - chairSize - 4;
             placeSeat(x, y);
         }
         
         // Seats on bottom
         for (let i = 0; i < seatsOnBottom; i++) {
-            const x = tableLeftX + (tableWidth * (i + 0.5)) / seatsOnBottom - chairWidth / 2;
+            const x = tableLeftX + (tableWidth * (i + 0.5)) / seatsOnBottom - chairSize / 2;
             const y = tableBottomY + 4;
             placeSeat(x,y);
         }
 
         // Seat on the left
         if (seatsOnLeft > 0) {
-            const x = tableLeftX - chairHeight - 4;
-            const y = containerSize / 2 - chairWidth / 2;
-            placeSeat(x, y, true);
+            const x = tableLeftX - chairSize - 4;
+            const y = containerSize / 2 - chairSize / 2;
+            placeSeat(x, y);
         }
         
         // Seat on the right
         if (seatsOnRight > 0) {
             const x = tableRightX + 4;
-            const y = containerSize / 2 - chairWidth / 2;
-            placeSeat(x, y, true);
+            const y = containerSize / 2 - chairSize / 2;
+            placeSeat(x, y);
         }
 
     }
@@ -148,7 +147,7 @@ export function TableRepresentation({ table, onSeatClick }: TableRepresentationP
             key={guest.id}
             onClick={() => onSeatClick(guest.id)}
             className={cn(
-              'absolute flex flex-col items-center justify-center bg-card border shadow-md transition-all hover:shadow-lg hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 text-center p-1 rounded-sm',
+              'absolute flex flex-col items-center justify-center bg-card border shadow-md transition-all hover:shadow-lg hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 text-center p-1',
               { 'border-green-500': guest.status === 'paid', 'border-blue-500': guest.status === 'all_served'}
             )}
             style={seatPositions[index]}
