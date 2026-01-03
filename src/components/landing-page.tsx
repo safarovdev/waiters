@@ -12,7 +12,7 @@ export function LandingPage({ onCreateTable }: LandingPageProps) {
     <div className="flex h-screen w-screen flex-col bg-background">
       <main className="flex-1 flex flex-col items-center justify-center text-center p-4">
         <div className="max-w-md w-full">
-           <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent tracking-tighter mb-4 animate-gradient-x">
+           <h1 className="text-6xl md:text-8xl font-bold text-foreground tracking-tighter mb-4">
             Azer
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-8">
